@@ -4,6 +4,8 @@ This repository will be for everything but for now it only has the drawing softw
 
 Currently only runs on windows.
 
+You must have CMAKE and mingw-32 installed on your windows machine.
+
 Graphics API is GLFW. Set it up by running:
 ```bash
 python setup_glfw.py
