@@ -24,7 +24,7 @@ def build():
         # Run the build command
         result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(result.stdout.decode("utf-8"))
-        print(f"Build succeeded. Executable created: {project_name}")
+        print(f"Build succeeded. Executable created: {project_name}.exe")
     
     except subprocess.CalledProcessError as e:
         print("Build failed.")
@@ -33,11 +33,11 @@ def build():
 
 def clean():
     """Clean the build files."""
-    if os.path.exists(project_name):
-        os.remove(project_name)
-        print(f"Removed executable: {project_name}")
+    if os.path.exists(project_name+".exe"):
+        os.remove(project_name+".exe")
+        print(f"Removed executable: {project_name}.exe")
     else:
-        print(f"No executable found to remove: {project_name}")
+        print(f"No executable found to remove: {project_name}.exe")
 
 def main():
     """Main function to handle command-line arguments."""
