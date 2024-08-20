@@ -1,1 +1,1 @@
-# interactive-sec
+# Interactive System for Electronic Creativity
