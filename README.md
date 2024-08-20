@@ -3,13 +3,16 @@
 Currently only runs on windows.
 
 Graphics API is GLFW. Set it up by running:
-'''bash
+```bash
 python setup_glfw.py
+```
 
 Build executable for drawing software:
-'''bash
+```bash
 python build.py build
+```
 
 Clean:
-'''bash
+```bash
 python build.py clean
+```
