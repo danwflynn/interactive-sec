@@ -7,11 +7,11 @@ typedef struct {
 } Point;
 
 typedef struct {
-    Point points[1000];  // Each line can have up to 1000 points
+    Point points[10000];  // Each line can have up to 1000 points
     int point_count;
 } Line;
 
-#define MAX_LINES 1000
+#define MAX_LINES 10000
 Line lines[MAX_LINES];
 int line_count = 0;
 int is_drawing = 0;
@@ -43,7 +43,8 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void draw_lines() {
-    glColor3f(0.0f, 0.0f, 0.0f);  // Set line color to black
+    glColor3f(255.0f, 0.0f, 0.0f);  // Set line color to black
+    glLineWidth(6.0f);  // Set line thickness (e.g., 3.0 for thicker lines)
     for (int i = 0; i < line_count; ++i) {
         if (lines[i].point_count > 1) {
             glBegin(GL_LINE_STRIP);
@@ -71,8 +72,11 @@ int main(void) {
         return -1;
     }
 
+    // Set window hints to disable resizing
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Drawing Canvas", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1280, 960, "Drawing Canvas", NULL, NULL);
     if (!window) {
         glfwTerminate();
         return -1;
