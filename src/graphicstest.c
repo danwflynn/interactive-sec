@@ -1,6 +1,9 @@
 #include <GLFW/glfw3.h>
+#include <GL/gl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "../include/stb_image.h"
 
 typedef struct {
     float x, y;
