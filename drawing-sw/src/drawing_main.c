@@ -2,6 +2,8 @@
 #include <GL/gl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../include/stb_image.h"
@@ -68,6 +70,82 @@ void free_line_memory(Line* line) {
     line->points = NULL;
 }
 
+void save_lines(const char* filename) {
+    FILE* file = fopen(filename, "wb");
+    if (!file) {
+        fprintf(stderr, "Failed to open file for writing: %s\n", strerror(errno));
+        return;
+    }
+
+    // Write the number of lines
+    fwrite(&line_count, sizeof(int), 1, file);
+
+    // Write each line's data
+    for (int i = 0; i < line_count; ++i) {
+        Line* line = &lines[i];
+        
+        // Write the line's color
+        fwrite(line->color, sizeof(float), 3, file);
+
+        // Write the number of points
+        fwrite(&line->point_count, sizeof(int), 1, file);
+
+        // Write each point
+        fwrite(line->points, sizeof(Point), line->point_count, file);
+    }
+
+    fclose(file);
+}
+
+void load_lines(const char* filename) {
+    FILE* file = fopen(filename, "rb");
+    if (!file) {
+        fprintf(stderr, "Failed to open file for reading: %s\n", strerror(errno));
+        return;
+    }
+
+    // Free existing line data
+    for (int i = 0; i < line_count; i++) {
+        free_line_memory(&lines[i]);
+    }
+    line_count = 0;
+
+    // Read the number of lines
+    fread(&line_count, sizeof(int), 1, file);
+
+    // Read each line's data
+    for (int i = 0; i < line_count; ++i) {
+        if (line_count >= MAX_LINES) {
+            fprintf(stderr, "Too many lines in file\n");
+            fclose(file);
+            return;
+        }
+
+        Line* line = &lines[i];
+
+        // Allocate memory for the new line
+        line->points = (Point*)malloc(1000 * sizeof(Point));  // Initial capacity
+        if (line->points == NULL) {
+            fprintf(stderr, "Failed to allocate memory for points\n");
+            fclose(file);
+            return;
+        }
+
+        // Read the line's color
+        fread(line->color, sizeof(float), 3, file);
+
+        // Read the number of points
+        fread(&line->point_count, sizeof(int), 1, file);
+
+        // Read each point
+        line->point_capacity = line->point_count;
+        line->points = (Point*)realloc(line->points, line->point_capacity * sizeof(Point));
+        fread(line->points, sizeof(Point), line->point_count, file);
+    }
+
+    fclose(file);
+}
+
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
         if (action == GLFW_PRESS && line_count < MAX_LINES) {
@@ -81,7 +159,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
-    if (is_drawing && lines[line_count].point_count < lines[line_count].point_capacity) {
+    if (is_drawing) {
         // Convert mouse coordinates to OpenGL coordinates
         int width, height;
         glfwGetWindowSize(window, &width, &height);
@@ -97,6 +175,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         // Cycle to the next color
         current_color_index = (current_color_index + 1) % (sizeof(colors) / sizeof(colors[0]));
         printf("Switched to color: R=%.1f, G=%.1f, B=%.1f\n", colors[current_color_index][0], colors[current_color_index][1], colors[current_color_index][2]);
+    } else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+        // Save lines to a file
+        save_lines("drawing_data.bin");
+        printf("Drawing saved to drawing_data.bin\n");
+    } else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+        // Load lines from a file
+        load_lines("drawing_data.bin");
+        printf("Drawing loaded from drawing_data.bin\n");
     }
 }
 
