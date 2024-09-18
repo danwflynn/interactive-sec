@@ -127,6 +127,7 @@ int main(void) {
     // Create a windowed mode window and its OpenGL context
     GLFWwindow* window = glfwCreateWindow(1280, 960, "Drawing Canvas", NULL, NULL);
     if (!window) {
+        fprintf(stderr, "Failed to create GLFW window\n");
         glfwTerminate();
         return -1;
     }
