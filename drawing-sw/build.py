@@ -3,8 +3,8 @@ import subprocess
 import sys
 
 # Define paths
-project_name = "graphicstest"
-source_file = "./src/graphicstest.c"
+project_name = "drawing_main"
+source_file = "./src/drawing_main.c"
 glfw_include_path = "./glfw/include"
 glfw_lib_path = "./glfw/build/src"
 
