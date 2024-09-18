@@ -4,21 +4,22 @@ import sys
 
 # Define paths
 project_name = "drawing_main"
-source_file = "./src/drawing_main.c"
+source_files = ["./src/drawing_main.c", "./src/drawing_io.c"]
+include_path = "./include"
 glfw_include_path = "./glfw/include"
 glfw_lib_path = "./glfw/build/src"
 
 # Compiler and flags
 compiler = "gcc"
-cflags = f"-I {glfw_include_path}"
+cflags = f"-I {include_path} -I {glfw_include_path}"
 lflags = f"-L {glfw_lib_path} -lglfw3 -lgdi32 -lopengl32 -lm -lpthread"
 
 # Build command
-command = f"{compiler} -o {project_name} {source_file} {cflags} {lflags}"
+command = f"{compiler} -o {project_name} {' '.join(source_files)} {cflags} {lflags}"
 
 def build():
     """Build the project."""
-    print(f"Compiling {source_file}...")
+    print(f"Compiling {' '.join(source_files)}...")
     
     try:
         # Run the build command
