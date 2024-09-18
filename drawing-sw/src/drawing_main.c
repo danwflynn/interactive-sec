@@ -7,8 +7,6 @@
 #include "drawing_main.h"
 #include "drawing_io.h"
 
-#define INITIAL_POINT_CAPACITY 1000
-
 // Initialize the global variables
 Line lines[MAX_LINES];
 int line_count = 0;
