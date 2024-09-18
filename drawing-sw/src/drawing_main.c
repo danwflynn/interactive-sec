@@ -11,7 +11,7 @@ typedef struct {
 } Point;
 
 typedef struct {
-    Point points[10000];  // Each line can have up to 1000 points
+    Point points[10000];  // Each line can have up to 10000 points
     int point_count;
     float color[3];  // Store the color for each line
 } Line;

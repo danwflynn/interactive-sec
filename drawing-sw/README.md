@@ -1,6 +1,6 @@
 # Interactive System for Electronic Creativity
 
-This repository will be for everything but for now it only has the drawing software.
+This folder is for the drawing system.
 
 Currently only runs on windows.
 
