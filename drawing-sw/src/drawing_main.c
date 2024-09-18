@@ -124,6 +124,10 @@ int main(void) {
     // Set the background color to white
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
+    // Make lines smoother
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         // Clear the screen
