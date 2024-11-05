@@ -12,8 +12,8 @@ def track_red_dot():
 
         hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        lower_blue = np.array([100, 150, 70])
-        upper_blue = np.array([130, 255, 255])
+        lower_blue = np.array([125, 100, 50])
+        upper_blue = np.array([145, 255, 255])
         blue_mask = cv2.inRange(hsv_frame, lower_blue, upper_blue)
         
         blue_output = cv2.bitwise_and(frame, frame, mask=blue_mask)
