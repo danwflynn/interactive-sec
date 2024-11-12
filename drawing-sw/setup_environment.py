@@ -26,13 +26,13 @@ def setup_glfw(build_dir):
     if not os.path.isdir(build_dir):
         os.makedirs(build_dir)
     
-    # Determine the generator and build command based on the OS
-    generator = "MinGW Makefiles" if is_windows else "Unix Makefiles"
+    # Determine generator and command based on OS
+    generator_option = "-G \"MinGW Makefiles\"" if is_windows else ""
     build_command = "mingw32-make" if is_windows else "make"
     
-    # Run CMake to configure the project
+    # Run CMake to configure the project (omit -G option for Raspberry Pi)
     print("Configuring CMake for GLFW...")
-    run_command(f"cmake -G \"{generator}\" -S glfw -B {build_dir}")
+    run_command(f"cmake {generator_option} -S glfw -B {build_dir}".strip())
     
     # Build the project
     print("Building GLFW...")
