@@ -1,5 +1,6 @@
 import subprocess
 import os
+import platform
 
 def run_command(command, cwd=None):
     """Run a shell command and handle errors."""
@@ -10,10 +11,13 @@ def run_command(command, cwd=None):
     return result
 
 def setup_glfw(build_dir):
-    """Clone the GLFW repository, set up CMake, and build with MinGW."""
+    """Clone the GLFW repository, set up CMake, and build."""
     repo_url = "https://github.com/glfw/glfw"
     
-    # Clone the GLFW repository
+    # Detect the operating system
+    is_windows = platform.system() == "Windows"
+    
+    # Clone the GLFW repository if it doesn't already exist
     if not os.path.isdir("glfw"):
         print("Cloning GLFW repository...")
         run_command(f"git clone {repo_url}")
@@ -22,13 +26,17 @@ def setup_glfw(build_dir):
     if not os.path.isdir(build_dir):
         os.makedirs(build_dir)
     
-    # Run CMake to generate MinGW Makefiles
-    print("Configuring CMake for GLFW...")
-    run_command(f"cmake -G \"MinGW Makefiles\" -S glfw -B {build_dir}")
+    # Determine the generator and build command based on the OS
+    generator = "MinGW Makefiles" if is_windows else "Unix Makefiles"
+    build_command = "mingw32-make" if is_windows else "make"
     
-    # Build the project using MinGW Makefiles
+    # Run CMake to configure the project
+    print("Configuring CMake for GLFW...")
+    run_command(f"cmake -G \"{generator}\" -S glfw -B {build_dir}")
+    
+    # Build the project
     print("Building GLFW...")
-    run_command("mingw32-make", cwd=build_dir)
+    run_command(build_command, cwd=build_dir)
 
 if __name__ == "__main__":
     glfw_build_dir = "glfw/build"
