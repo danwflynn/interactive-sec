@@ -2,7 +2,6 @@
 #include <GL/gl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
 #include "drawing_main.h"
 #include "drawing_io.h"
@@ -84,7 +83,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void draw_lines() {
-    glLineWidth(6.0f);  // Set line thickness (e.g., 6.0 for thicker lines)
+    glLineWidth(6.0f);  // Set line thickness
     for (int i = 0; i < line_count; ++i) {
         if (lines[i].point_count > 1) {
             // Set the color of the line
@@ -152,7 +151,7 @@ int main(void) {
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Draw all the lines
+        // Draw all the lines on top of the background
         draw_lines();
 
         // Swap front and back buffers

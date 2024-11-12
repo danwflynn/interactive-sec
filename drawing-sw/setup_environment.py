@@ -23,7 +23,7 @@ def setup_glfw(build_dir):
         os.makedirs(build_dir)
     
     # Run CMake to generate MinGW Makefiles
-    print("Configuring CMake...")
+    print("Configuring CMake for GLFW...")
     run_command(f"cmake -G \"MinGW Makefiles\" -S glfw -B {build_dir}")
     
     # Build the project using MinGW Makefiles
@@ -31,5 +31,7 @@ def setup_glfw(build_dir):
     run_command("mingw32-make", cwd=build_dir)
 
 if __name__ == "__main__":
-    build_dir = "glfw/build"
-    setup_glfw(build_dir)
+    glfw_build_dir = "glfw/build"
+    
+    # Set up GLFW
+    setup_glfw(glfw_build_dir)
