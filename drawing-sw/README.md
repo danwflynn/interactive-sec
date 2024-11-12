@@ -8,7 +8,7 @@ You must have CMAKE and mingw-32 installed on your windows machine.
 
 Graphics API is GLFW. Set it up by running:
 ```bash
-python setup_glfw.py
+python setup_environment.py
 ```
 
 Build executable for drawing software:
