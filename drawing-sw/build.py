@@ -20,7 +20,7 @@ cflags = f"-I {include_path} -I {glfw_include_path}"
 if platform.system() == "Windows":
     lflags = f"-L {glfw_lib_path} -lglfw3 -lgdi32 -lopengl32 -lm -lpthread"
 else:
-    lflags = f"-L {glfw_lib_path} -lglfw -lGL -lX11 -lm -lpthread"
+    lflags = f"-L {glfw_lib_path} -lglfw3 -lGL -lX11 -lm -lpthread"
 
 # Build command
 command = f"{compiler} -o {project_name} {' '.join(source_files)} {cflags} {lflags}"
