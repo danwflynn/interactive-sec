@@ -5,7 +5,7 @@ import platform
 
 # Define paths
 project_name = "drawing_main"
-source_files = ["./src/drawing_main.c", "./src/drawing_io.c"]
+source_files = ["./src/drawing_main.c", "./src/drawing_io.c", "./src/callbacks.c"]
 include_path = "./include"
 glfw_include_path = "./glfw/include"
 glfw_lib_path = "./glfw/build/src"
