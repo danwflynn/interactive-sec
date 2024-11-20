@@ -2,5 +2,5 @@
 *.bin
 drawing-sw/drawing_main
 drawing-sw/glfw/
-drawing-sw/paho.mqtt.c
+drawing-sw/paho.mqtt.c/
 .vscode/
