@@ -66,4 +66,5 @@ if __name__ == "__main__":
     setup_glfw(glfw_build_dir)
 
     # Set up Paho MQTT
-    setup_paho_mqtt(paho_build_dir)
+    if not is_windows:
+        setup_paho_mqtt(paho_build_dir)
