@@ -8,6 +8,7 @@ project_name = "drawing_main"
 source_files = ["./src/drawing_main.c", "./src/drawing_io.c", "./src/callbacks.c"]
 include_path = "./include"
 glfw_include_path = "./glfw/include"
+mqtt_include_path = "./paho.mqtt.c/src"
 glfw_lib_path = "./glfw/build/src"
 mqtt_lib_path = "./paho.mqtt.c/build/src"
 
@@ -15,13 +16,13 @@ mqtt_lib_path = "./paho.mqtt.c/build/src"
 compiler = "gcc"
 
 # Compiler flags
-cflags = f"-I {include_path} -I {glfw_include_path} -I ./paho.mqtt.c/src"
+cflags = f"-I {include_path} -I {glfw_include_path} -I {mqtt_include_path}"
 
 # Detect OS and set linker flags
 if platform.system() == "Windows":
     lflags = f"-L {glfw_lib_path} -lglfw3 -lgdi32 -lopengl32 -lm -lpthread"
 else:
-    lflags = f"-L {glfw_lib_path} -L {mqtt_lib_path} -lglfw3 -lpaho-mqtt3c -lGL -lX11 -lm -lpthread"
+    lflags = f"-L {glfw_lib_path} -L {mqtt_lib_path} -WL,-rpath,{mqtt_lib_path} -lglfw3 -lpaho-mqtt3c -lGL -lX11 -lm -lpthread"
 
 # Build command
 command = f"{compiler} -o {project_name} {' '.join(source_files)} {cflags} {lflags}"
