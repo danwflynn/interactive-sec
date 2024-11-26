@@ -17,9 +17,10 @@ int messageArrived(void *context, char *topicName, int topicLen, MQTTClient_mess
     } else {
         printf("Received empty message\n");
     }
+
     // Free the message payload after it's processed
     MQTTClient_freeMessage(&message);
-    MQTTClient_free(topicName);
+    MQTTClient_free(topicName);  // Make sure to free the topic name
 }
 
 int main() {

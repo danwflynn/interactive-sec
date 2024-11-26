@@ -40,6 +40,7 @@ def track_red_dot():
                 cv2.circle(frame, center, radius, (0, 255, 0), 2)
                 cv2.circle(frame, center, 5, (0, 255, 0), -1)
                 message = f"{x} {y}"
+                print(message)
                 client.publish(TOPIC, message)
         
         cv2.imshow("Red Dot Tracking", frame)
