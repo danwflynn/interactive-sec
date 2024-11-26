@@ -1,6 +1,16 @@
-from picamera2 import Picamera2
 import cv2
 import numpy as np
+import paho.mqtt.client as mqtt
+from picamera2 import Picamera2
+
+# MQTT Setup
+BROKER = "localhost"  # Replace with the address of your MQTT broker
+PORT = 1883
+TOPIC = "drawing/coordinates"
+
+# Initialize the MQTT client
+client = mqtt.Client()
+client.connect(BROKER, PORT, 60)
 
 def track_red_dot():
     picam2 = Picamera2()
@@ -29,6 +39,8 @@ def track_red_dot():
             if radius > 10:
                 cv2.circle(frame, center, radius, (0, 255, 0), 2)
                 cv2.circle(frame, center, 5, (0, 255, 0), -1)
+                message = f"{x} {y}"
+                client.publish(TOPIC, message)
         
         cv2.imshow("Red Dot Tracking", frame)
 
