@@ -10,7 +10,7 @@
 #define QOS 1                          // Quality of Service level
 #define TIMEOUT 10000L                 // Timeout for waiting for messages
 
-void messageArrived(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
+int messageArrived(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
     if (message->payloadlen) {
         // Print the received coordinates
         printf("Received message on topic %s: %s\n", topicName, (char *)message->payload);
