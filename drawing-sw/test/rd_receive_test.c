@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <mqtt/MQTTClient.h>
+#include <MQTTClient.h>
 
 #define BROKER "tcp://localhost:1883"  // MQTT broker address
 #define CLIENTID "CoordinateReceiver"  // Client ID
