@@ -20,11 +20,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 #define QOS 1
 
 MQTTClient client;
-volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
-int use_mqtt = 0;
+volatile float mqtt_x, mqtt_y;
+int use_mqtt;
 
 void setup_mqtt();  // Setup MQTT client
-void poll_mqtt_coordinates();  // Poll MQTT for red dot coordinates
+int poll_mqtt_coordinates();  // Poll MQTT for red dot coordinates
 #endif
 
 #endif // CALLBACKS_H

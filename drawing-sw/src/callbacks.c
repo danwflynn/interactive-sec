@@ -9,6 +9,10 @@
 #ifdef __linux__  // Include MQTT libraries and variables for Raspberry Pi
 #include "MQTTClient.h"
 
+MQTTClient client;
+volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
+int use_mqtt = 0;
+
 void setup_mqtt() {
     MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
@@ -24,14 +28,14 @@ void setup_mqtt() {
     MQTTClient_subscribe(client, TOPIC, QOS);
 }
 
-void mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
+int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
     char* payload = (char*)message->payload;
     sscanf(payload, "%f %f", &mqtt_x, &mqtt_y);
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
 }
 
-void poll_mqtt_coordinates() {
+int poll_mqtt_coordinates() {
     MQTTClient_setCallbacks(client, NULL, NULL, mqtt_message_arrived, NULL);
     MQTTClient_yield();
 }
