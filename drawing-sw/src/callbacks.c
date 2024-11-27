@@ -9,15 +9,6 @@
 #ifdef __linux__  // Include MQTT libraries and variables for Raspberry Pi
 #include "MQTTClient.h"
 
-#define ADDRESS "tcp://localhost:1883"
-#define CLIENTID "DrawingSoftwareClient"
-#define TOPIC "drawing/coordinates"
-#define QOS 1
-
-MQTTClient client;
-volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
-int use_mqtt = 0;
-
 void setup_mqtt() {
     MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;

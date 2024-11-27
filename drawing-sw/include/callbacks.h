@@ -12,6 +12,17 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 #ifdef __linux__  // Define MQTT setup and polling only for Raspberry Pi/Linux
+#include "MQTTClient.h"
+
+#define ADDRESS "tcp://localhost:1883"
+#define CLIENTID "DrawingSoftwareClient"
+#define TOPIC "drawing/coordinates"
+#define QOS 1
+
+MQTTClient client;
+volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
+int use_mqtt = 0;
+
 void setup_mqtt();  // Setup MQTT client
 void poll_mqtt_coordinates();  // Poll MQTT for red dot coordinates
 #endif
