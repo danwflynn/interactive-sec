@@ -58,28 +58,6 @@ float colors[][3] = {
 };
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-#ifdef __linux__
-    if (use_mqtt && button == GLFW_MOUSE_BUTTON_LEFT) {
-        // Behavior for Raspberry Pi: Use red dot coordinates
-        if (action == GLFW_PRESS && line_count < MAX_LINES) {
-            is_drawing = 1;
-            lines[line_count].point_count = 0;
-            lines[line_count].point_capacity = INITIAL_POINT_CAPACITY;
-            lines[line_count].points = (Point*)malloc(lines[line_count].point_capacity * sizeof(Point));
-            if (lines[line_count].points == NULL) {
-                fprintf(stderr, "Failed to allocate memory for points\n");
-                return;
-            }
-            lines[line_count].color[0] = colors[current_color_index][0];
-            lines[line_count].color[1] = colors[current_color_index][1];
-            lines[line_count].color[2] = colors[current_color_index][2];
-        } else if (action == GLFW_RELEASE) {
-            is_drawing = 0;
-            line_count++;
-        }
-    }
-#else
-    // Behavior for Windows: Mouse-based drawing
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
         if (action == GLFW_PRESS && line_count < MAX_LINES) {
             is_drawing = 1;
@@ -98,7 +76,6 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             line_count++;
         }
     }
-#endif
 }
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
