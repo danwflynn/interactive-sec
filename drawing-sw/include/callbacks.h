@@ -19,9 +19,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 #define TOPIC "drawing/coordinates"
 #define QOS 1
 
-MQTTClient client;
-volatile float mqtt_x, mqtt_y;
-int use_mqtt;
+extern MQTTClient client;
+extern volatile float mqtt_x, mqtt_y;
+extern int use_mqtt;
 
 void setup_mqtt();  // Setup MQTT client
 int poll_mqtt_coordinates();  // Poll MQTT for red dot coordinates
