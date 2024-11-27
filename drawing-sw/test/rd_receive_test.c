@@ -12,46 +12,51 @@
 
 int messageArrived(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
     if (message->payloadlen) {
-        // Print the received coordinates
-        printf("Received message on topic %s: %s\n", topicName, (char *)message->payload);
+        char *payload = (char *)malloc(message->payloadlen + 1);
+        if (!payload) {
+            printf("Failed to allocate memory for payload\n");
+            MQTTClient_freeMessage(&message);
+            MQTTClient_free(topicName);
+            return 1;
+        }
+
+        memcpy(payload, message->payload, message->payloadlen);
+        payload[message->payloadlen] = '\0';
+
+        printf("Received message on topic %s: %s\n", topicName, payload);
+
+        free(payload);
     } else {
-        printf("Received empty message\n");
+        printf("Received empty message on topic %s\n", topicName);
     }
 
-    // Free the message payload after it's processed
     MQTTClient_freeMessage(&message);
-    MQTTClient_free(topicName);  // Make sure to free the topic name
+    MQTTClient_free(topicName);
+
+    return 1; // Indicate successful processing of the message
 }
 
 int main() {
     MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
-    MQTTClient_message message = MQTTClient_message_initializer;
-    MQTTClient_deliveryToken token;
 
-    // Initialize the MQTT client
-    int rc = MQTTClient_create(&client, BROKER, CLIENTID,
-                               MQTTCLIENT_PERSISTENCE_NONE, NULL);
+    int rc = MQTTClient_create(&client, BROKER, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
     if (rc != MQTTCLIENT_SUCCESS) {
         printf("Failed to create client, return code %d\n", rc);
         exit(EXIT_FAILURE);
     }
 
-    // Set the callback function for message arrival
     MQTTClient_setCallbacks(client, NULL, NULL, messageArrived, NULL);
 
-    // Set connection options
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
 
-    // Connect to the broker
     rc = MQTTClient_connect(client, &conn_opts);
     if (rc != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
         exit(EXIT_FAILURE);
     }
 
-    // Subscribe to the topic
     rc = MQTTClient_subscribe(client, TOPIC, QOS);
     if (rc != MQTTCLIENT_SUCCESS) {
         printf("Failed to subscribe, return code %d\n", rc);
@@ -60,13 +65,10 @@ int main() {
 
     printf("Subscribed to topic: %s\n", TOPIC);
 
-    // Start the message loop
     while (1) {
-        // The loop will handle incoming messages in the background
-        usleep(100000);  // Sleep for a short time to avoid busy-waiting
+        usleep(100000);
     }
 
-    // Clean up and disconnect from the broker
     MQTTClient_disconnect(client, 10000);
     MQTTClient_destroy(&client);
 
