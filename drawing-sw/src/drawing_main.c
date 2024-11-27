@@ -77,6 +77,11 @@ int main(void) {
     glfwSetCursorPosCallback(window, cursor_position_callback);
     glfwSetKeyCallback(window, key_callback);
 
+    // Initialize MQTT (Linux)
+    #ifdef __linux__
+    setup_mqtt();  // Initialize MQTT setup
+    #endif
+
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         // Clear the screen
@@ -90,6 +95,13 @@ int main(void) {
 
         // Poll for and process events
         glfwPollEvents();
+
+        // Poll MQTT for incoming coordinates (if on Linux)
+        #ifdef __linux__
+        if (use_mqtt) {
+            poll_mqtt_coordinates();  // Check for new messages
+        }
+        #endif
     }
 
     // Clean up allocated memory
@@ -99,5 +111,14 @@ int main(void) {
 
     glfwDestroyWindow(window);
     glfwTerminate();
+
+    #ifdef __linux__
+    // Clean up MQTT client if used
+    if (use_mqtt) {
+        MQTTClient_disconnect(client, 1000);
+        MQTTClient_destroy(&client);
+    }
+    #endif
+
     return 0;
 }
