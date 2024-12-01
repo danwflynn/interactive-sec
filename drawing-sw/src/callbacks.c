@@ -151,26 +151,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         load_lines("drawing_data.bin");
         printf("Drawing loaded from drawing_data.bin\n");
     } 
-    if (key == GLFW_KEY_SPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        // Draw at MQTT coordinates while spacebar is held down
-        #ifdef __linux__
-        allow_draw = 1;
-        // if (use_mqtt) {
-        //     int width, height;
-        //     glfwGetWindowSize(window, &width, &height);
-        //     float x = (2.0f * mqtt_x / width) - 1.0f;
-        //     float y = 1.0f - (2.0f * mqtt_y / height);
-
-        //     if (line_count < MAX_LINES) {
-        //         lines[line_count].points[lines[line_count].point_count].x = x;
-        //         lines[line_count].points[lines[line_count].point_count].y = y;
-        //         lines[line_count].point_count++;
-        //     }
-        // }
-        #endif
-    } else {
-        #ifdef __linux__
-        allow_draw = 0;
-        #endif
+    // Handle spacebar key press and release
+    if (key == GLFW_KEY_SPACE) {
+        if (action == GLFW_PRESS) {
+            #ifdef __linux__
+            allow_draw = 1; // Start drawing when spacebar is pressed
+            #endif
+        } else if (action == GLFW_RELEASE) {
+            #ifdef __linux__
+            allow_draw = 0; // Stop drawing when spacebar is released
+            #endif
+        }
     }
 }
