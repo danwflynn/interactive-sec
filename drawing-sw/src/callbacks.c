@@ -13,24 +13,6 @@ MQTTClient client;
 volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
 int use_mqtt = 0;
 
-void setup_mqtt() {
-    MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
-    MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
-
-    if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS) {
-        fprintf(stderr, "Failed to connect to MQTT broker.\n");
-        use_mqtt = 0;
-        return;
-    }
-    use_mqtt = 1;
-    printf("Connected to MQTT broker.\n");
-
-    MQTTClient_setCallbacks(client, NULL, NULL, mqtt_message_arrived, NULL);
-    MQTTClient_yield();
-
-    MQTTClient_subscribe(client, TOPIC, QOS);
-}
-
 int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
     printf("Message arrived callback triggered\n");
     char *payload = (char *)malloc(message->payloadlen + 1);
@@ -47,6 +29,24 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
     free(payload);
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
+}
+
+void setup_mqtt() {
+    MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+    MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+
+    if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS) {
+        fprintf(stderr, "Failed to connect to MQTT broker.\n");
+        use_mqtt = 0;
+        return;
+    }
+    use_mqtt = 1;
+    printf("Connected to MQTT broker.\n");
+
+    MQTTClient_setCallbacks(client, NULL, NULL, mqtt_message_arrived, NULL);
+    MQTTClient_yield();
+
+    MQTTClient_subscribe(client, TOPIC, QOS);
 }
 
 int poll_mqtt_coordinates() {
