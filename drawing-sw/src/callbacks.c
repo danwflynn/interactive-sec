@@ -31,6 +31,8 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
             
             float xpos, ypos;
             int num_parsed = sscanf(payload, "%f %f", &xpos, &ypos);  // Parses two floating-point numbers
+	    xpos *= 2;
+	    ypos *= 2;
             
         if (num_parsed == 2) {
             if (allow_draw && lines[line_count].point_count < lines[line_count].point_capacity) {
