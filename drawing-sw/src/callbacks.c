@@ -11,7 +11,6 @@
 #include "MQTTClient.h"
 
 MQTTClient client;
-//volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
 int use_mqtt = 0;
 int allow_draw = 0;
 
@@ -35,7 +34,25 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
             int num_parsed = sscanf(payload, "%f %f", &xpos, &ypos);  // Parses two floating-point numbers
             
             if (num_parsed == 2) {
-                printf("Parsed values: x = %f, y = %f\n", xpos, ypos);
+                if (allow_draw && lines[line_count].point_count < lines[line_count].point_capacity) {
+                    // Convert mouse coordinates to OpenGL coordinates
+                    int width, height;
+                    glfwGetWindowSize(window, &width, &height);
+                    float x = (2.0f * xpos / width) - 1.0f;
+                    float y = 1.0f - (2.0f * ypos / height);
+
+                    lines[line_count].points[lines[line_count].point_count].x = x;
+                    lines[line_count].points[lines[line_count].point_count].y = y;
+                    lines[line_count].point_count++;
+                } else if (allow_draw && lines[line_count].point_count >= lines[line_count].point_capacity) {
+                    // Increase capacity
+                    lines[line_count].point_capacity *= 2;
+                    lines[line_count].points = (Point*)realloc(lines[line_count].points, lines[line_count].point_capacity * sizeof(Point));
+                    if (lines[line_count].points == NULL) {
+                        fprintf(stderr, "Failed to reallocate memory for points\n");
+                        return;
+                    }
+                }
             } else {
                 printf("Failed to parse floating point numbers from payload\n");
             }
@@ -165,16 +182,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if (action == GLFW_PRESS) {
             #ifdef __linux__
             allow_draw = 1; // Start drawing when spacebar is pressed
-            // lines[line_count].point_count = 0;
-            // lines[line_count].point_capacity = INITIAL_POINT_CAPACITY;
-            // lines[line_count].points = (Point*)malloc(lines[line_count].point_capacity * sizeof(Point));
-            // if (lines[line_count].points == NULL) {
-            //     fprintf(stderr, "Failed to allocate memory for points\n");
-            //     return;
-            // }
-            // lines[line_count].color[0] = colors[current_color_index][0];
-            // lines[line_count].color[1] = colors[current_color_index][1];
-            // lines[line_count].color[2] = colors[current_color_index][2];
+            lines[line_count].point_count = 0;
+            lines[line_count].point_capacity = INITIAL_POINT_CAPACITY;
+            lines[line_count].points = (Point*)malloc(lines[line_count].point_capacity * sizeof(Point));
+            if (lines[line_count].points == NULL) {
+                fprintf(stderr, "Failed to allocate memory for points\n");
+                return;
+            }
+            lines[line_count].color[0] = colors[current_color_index][0];
+            lines[line_count].color[1] = colors[current_color_index][1];
+            lines[line_count].color[2] = colors[current_color_index][2];
             #endif
         } else if (action == GLFW_RELEASE) {
             #ifdef __linux__
