@@ -10,6 +10,10 @@
 #ifdef __linux__  // Include MQTT libraries and variables for Raspberry Pi
 #include "MQTTClient.h"
 
+MQTTClient client;
+volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
+int use_mqtt = 0;
+
 int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
     if (message->payloadlen) {
         char *payload = (char *)malloc(message->payloadlen + 1);
