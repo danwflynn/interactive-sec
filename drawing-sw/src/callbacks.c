@@ -25,6 +25,9 @@ void setup_mqtt() {
     use_mqtt = 1;
     printf("Connected to MQTT broker.\n");
 
+    MQTTClient_setCallbacks(client, NULL, NULL, mqtt_message_arrived, NULL);
+    MQTTClient_yield();
+
     MQTTClient_subscribe(client, TOPIC, QOS);
 }
 

@@ -95,13 +95,6 @@ int main(void) {
 
         // Poll for and process events
         glfwPollEvents();
-
-        // Poll MQTT for incoming coordinates (if on Linux)
-        #ifdef __linux__
-        if (use_mqtt) {
-            poll_mqtt_coordinates();  // Check for new messages
-        }
-        #endif
     }
 
     // Clean up allocated memory
