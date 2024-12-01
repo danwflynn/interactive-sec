@@ -103,7 +103,6 @@ void setup_mqtt() {
 // MQTT polling in a separate thread
 void* mqtt_thread(void* arg) {
     while (1) {
-        draw_lines();
         MQTTClient_yield();
         usleep(100000);  // Sleep to prevent high CPU usage
     }
