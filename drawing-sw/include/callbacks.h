@@ -14,10 +14,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 #ifdef __linux__  // Define MQTT setup and polling only for Raspberry Pi/Linux
 #include "MQTTClient.h"
 
-#define ADDRESS "tcp://localhost:1883"
-#define CLIENTID "DrawingSoftwareClient"
-#define TOPIC "drawing/coordinates"
-#define QOS 1
+#define BROKER "tcp://localhost:1883"  // MQTT broker address
+#define CLIENTID "CoordinateReceiver"  // Client ID
+#define TOPIC "drawing/coordinates"    // MQTT topic
+#define QOS 1                          // Quality of Service level
+#define TIMEOUT 10000L                 // Timeout for waiting for messages
 
 extern MQTTClient client;
 extern volatile float mqtt_x, mqtt_y;
