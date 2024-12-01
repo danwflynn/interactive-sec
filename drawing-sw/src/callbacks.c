@@ -150,7 +150,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         // Load lines from a file
         load_lines("drawing_data.bin");
         printf("Drawing loaded from drawing_data.bin\n");
-    } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+    } 
+    if (key == GLFW_KEY_SPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         // Draw at MQTT coordinates while spacebar is held down
         #ifdef __linux__
         allow_draw = 1;
