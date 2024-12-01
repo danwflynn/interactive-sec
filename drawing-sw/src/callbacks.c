@@ -121,16 +121,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         // Draw at MQTT coordinates while spacebar is held down
         #ifdef __linux__
         if (use_mqtt) {
-            int width, height;
-            glfwGetWindowSize(window, &width, &height);
-            float x = (2.0f * mqtt_x / width) - 1.0f;
-            float y = 1.0f - (2.0f * mqtt_y / height);
+            // int width, height;
+            // glfwGetWindowSize(window, &width, &height);
+            // float x = (2.0f * mqtt_x / width) - 1.0f;
+            // float y = 1.0f - (2.0f * mqtt_y / height);
 
-            if (line_count < MAX_LINES) {
-                lines[line_count].points[lines[line_count].point_count].x = x;
-                lines[line_count].points[lines[line_count].point_count].y = y;
-                lines[line_count].point_count++;
-            }
+            // if (line_count < MAX_LINES) {
+            //     lines[line_count].points[lines[line_count].point_count].x = x;
+            //     lines[line_count].points[lines[line_count].point_count].y = y;
+            //     lines[line_count].point_count++;
+            // }
+            printf("%f, %f", mqtt_x, mqtt_y);
         }
         #endif
     }
