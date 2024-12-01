@@ -27,6 +27,7 @@ extern float colors[][3];
 extern int current_color_index;
 
 // Function declarations
+void draw_lines();
 void free_line_memory(Line* line);
 
 #endif // MAIN_H
