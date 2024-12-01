@@ -29,8 +29,17 @@ void setup_mqtt() {
 }
 
 int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
-    char* payload = (char*)message->payload;
+    char *payload = (char *)malloc(message->payloadlen + 1);
+    if (!payload) {
+        printf("Failed to allocate memory for payload\n");
+        MQTTClient_freeMessage(&message);
+        MQTTClient_free(topicName);
+        return 1;
+    }
+    memcpy(payload, message->payload, message->payloadlen);
+    payload[message->payloadlen] = '\0';
     sscanf(payload, "%f %f", &mqtt_x, &mqtt_y);
+    free(payload);
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
 }
