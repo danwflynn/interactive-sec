@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "drawing_main.h"
 #include "drawing_io.h"
 #include "callbacks.h"
