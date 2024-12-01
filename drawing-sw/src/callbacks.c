@@ -29,6 +29,7 @@ void setup_mqtt() {
 }
 
 int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
+    printf("Message arrived callback triggered\n");
     char *payload = (char *)malloc(message->payloadlen + 1);
     if (!payload) {
         printf("Failed to allocate memory for payload\n");
