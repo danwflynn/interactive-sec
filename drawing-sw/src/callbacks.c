@@ -32,21 +32,39 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
 }
 
 void setup_mqtt() {
-    MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+    MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
 
-    if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS) {
-        fprintf(stderr, "Failed to connect to MQTT broker.\n");
-        use_mqtt = 0;
-        return;
+    int rc = MQTTClient_create(&client, BROKER, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+    if (rc != MQTTCLIENT_SUCCESS) {
+        printf("Failed to create client, return code %d\n", rc);
+        exit(EXIT_FAILURE);
     }
+
+    MQTTClient_setCallbacks(client, NULL, NULL, messageArrived, NULL);
+
+    conn_opts.keepAliveInterval = 20;
+    conn_opts.cleansession = 1;
+
+    rc = MQTTClient_connect(client, &conn_opts);
+    if (rc != MQTTCLIENT_SUCCESS) {
+        printf("Failed to connect, return code %d\n", rc);
+        exit(EXIT_FAILURE);
+    }
+
     use_mqtt = 1;
-    printf("Connected to MQTT broker.\n");
 
-    MQTTClient_setCallbacks(client, NULL, NULL, mqtt_message_arrived, NULL);
-    MQTTClient_yield();
+    rc = MQTTClient_subscribe(client, TOPIC, QOS);
+    if (rc != MQTTCLIENT_SUCCESS) {
+        printf("Failed to subscribe, return code %d\n", rc);
+        exit(EXIT_FAILURE);
+    }
 
-    MQTTClient_subscribe(client, TOPIC, QOS);
+    printf("Subscribed to topic: %s\n", TOPIC);
+
+    while (1) {
+        usleep(100000);
+    }
 }
 
 int poll_mqtt_coordinates() {
