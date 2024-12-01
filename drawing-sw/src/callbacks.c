@@ -27,35 +27,33 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
         memcpy(payload, message->payload, message->payloadlen);
         payload[message->payloadlen] = '\0';
 
-        if (allow_draw == 1) {
             printf("Received message on topic %s: %s\n", topicName, payload);
             
             float xpos, ypos;
             int num_parsed = sscanf(payload, "%f %f", &xpos, &ypos);  // Parses two floating-point numbers
             
-            if (num_parsed == 2) {
-                if (allow_draw && lines[line_count].point_count < lines[line_count].point_capacity) {
-                    // Convert mouse coordinates to OpenGL coordinates
-                    int width = 1280;
-                    int height = 960;
-                    float x = (2.0f * xpos / width) - 1.0f;
-                    float y = 1.0f - (2.0f * ypos / height);
+        if (num_parsed == 2) {
+            if (allow_draw && lines[line_count].point_count < lines[line_count].point_capacity) {
+                // Convert mouse coordinates to OpenGL coordinates
+                int width = 1280;
+                int height = 960;
+                float x = (2.0f * xpos / width) - 1.0f;
+                float y = 1.0f - (2.0f * ypos / height);
 
-                    lines[line_count].points[lines[line_count].point_count].x = x;
-                    lines[line_count].points[lines[line_count].point_count].y = y;
-                    lines[line_count].point_count++;
-                } else if (allow_draw && lines[line_count].point_count >= lines[line_count].point_capacity) {
-                    // Increase capacity
-                    lines[line_count].point_capacity *= 2;
-                    lines[line_count].points = (Point*)realloc(lines[line_count].points, lines[line_count].point_capacity * sizeof(Point));
-                    if (lines[line_count].points == NULL) {
-                        fprintf(stderr, "Failed to reallocate memory for points\n");
-                        return 1;
-                    }
+                lines[line_count].points[lines[line_count].point_count].x = x;
+                lines[line_count].points[lines[line_count].point_count].y = y;
+                lines[line_count].point_count++;
+            } else if (allow_draw && lines[line_count].point_count >= lines[line_count].point_capacity) {
+                // Increase capacity
+                lines[line_count].point_capacity *= 2;
+                lines[line_count].points = (Point*)realloc(lines[line_count].points, lines[line_count].point_capacity * sizeof(Point));
+                if (lines[line_count].points == NULL) {
+                    fprintf(stderr, "Failed to reallocate memory for points\n");
+                    return 1;
                 }
-            } else {
-                printf("Failed to parse floating point numbers from payload\n");
             }
+        } else {
+            printf("Failed to parse floating point numbers from payload\n");
         }
 
         free(payload);
