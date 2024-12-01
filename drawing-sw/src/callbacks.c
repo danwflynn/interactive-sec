@@ -15,21 +15,44 @@ volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
 int use_mqtt = 0;
 
 int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
-    printf("Message arrived callback triggered\n");
-    char *payload = (char *)malloc(message->payloadlen + 1);
-    if (!payload) {
-        printf("Failed to allocate memory for payload\n");
-        MQTTClient_freeMessage(&message);
-        MQTTClient_free(topicName);
-        return 1;
+    // printf("Message arrived callback triggered\n");
+    // char *payload = (char *)malloc(message->payloadlen + 1);
+    // if (!payload) {
+    //     printf("Failed to allocate memory for payload\n");
+    //     MQTTClient_freeMessage(&message);
+    //     MQTTClient_free(topicName);
+    //     return 1;
+    // }
+    // memcpy(payload, message->payload, message->payloadlen);
+    // payload[message->payloadlen] = '\0';
+    // sscanf(payload, "%f %f", &mqtt_x, &mqtt_y);
+    // printf("%f %f", &mqtt_x, &mqtt_y);
+    // free(payload);
+    // MQTTClient_freeMessage(&message);
+    // MQTTClient_free(topicName);
+    if (message->payloadlen) {
+        char *payload = (char *)malloc(message->payloadlen + 1);
+        if (!payload) {
+            printf("Failed to allocate memory for payload\n");
+            MQTTClient_freeMessage(&message);
+            MQTTClient_free(topicName);
+            return 1;
+        }
+
+        memcpy(payload, message->payload, message->payloadlen);
+        payload[message->payloadlen] = '\0';
+
+        printf("Received message on topic %s: %s\n", topicName, payload);
+
+        free(payload);
+    } else {
+        printf("Received empty message on topic %s\n", topicName);
     }
-    memcpy(payload, message->payload, message->payloadlen);
-    payload[message->payloadlen] = '\0';
-    sscanf(payload, "%f %f", &mqtt_x, &mqtt_y);
-    printf("%f %f", &mqtt_x, &mqtt_y);
-    free(payload);
+
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
+
+    return 1; // Indicate successful processing of the message
 }
 
 void setup_mqtt() {
