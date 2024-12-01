@@ -42,7 +42,7 @@ void setup_mqtt() {
         exit(EXIT_FAILURE);
     }
 
-    MQTTClient_setCallbacks(client, NULL, NULL, messageArrived, NULL);
+    MQTTClient_setCallbacks(client, NULL, NULL, mqtt_message_arrived, NULL);
 
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
