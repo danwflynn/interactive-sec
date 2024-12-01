@@ -36,8 +36,8 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
             if (num_parsed == 2) {
                 if (allow_draw && lines[line_count].point_count < lines[line_count].point_capacity) {
                     // Convert mouse coordinates to OpenGL coordinates
-                    int width, height;
-                    glfwGetWindowSize(window, &width, &height);
+                    int width = 1280;
+                    int height = 960;
                     float x = (2.0f * xpos / width) - 1.0f;
                     float y = 1.0f - (2.0f * ypos / height);
 
@@ -50,7 +50,7 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
                     lines[line_count].points = (Point*)realloc(lines[line_count].points, lines[line_count].point_capacity * sizeof(Point));
                     if (lines[line_count].points == NULL) {
                         fprintf(stderr, "Failed to reallocate memory for points\n");
-                        return;
+                        return 1;
                     }
                 }
             } else {
