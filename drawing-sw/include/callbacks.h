@@ -25,7 +25,7 @@ extern volatile float mqtt_x, mqtt_y;
 extern int use_mqtt;
 
 void setup_mqtt();  // Setup MQTT client
-int poll_mqtt_coordinates();  // Poll MQTT for red dot coordinates
+void* mqtt_thread(void* arg);  // Poll MQTT for red dot coordinates
 #endif
 
 #endif // CALLBACKS_H
