@@ -30,6 +30,15 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
 
         if (allow_draw == 1) {
             printf("Received message on topic %s: %s\n", topicName, payload);
+            
+            float xpos, ypos;
+            int num_parsed = sscanf(payload, "%f %f", &xpos, &ypos);  // Parses two floating-point numbers
+            
+            if (num_parsed == 2) {
+                printf("Parsed values: x = %f, y = %f\n", xpos, ypos);
+            } else {
+                printf("Failed to parse floating point numbers from payload\n");
+            }
         }
 
         free(payload);
@@ -156,10 +165,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if (action == GLFW_PRESS) {
             #ifdef __linux__
             allow_draw = 1; // Start drawing when spacebar is pressed
+            // lines[line_count].point_count = 0;
+            // lines[line_count].point_capacity = INITIAL_POINT_CAPACITY;
+            // lines[line_count].points = (Point*)malloc(lines[line_count].point_capacity * sizeof(Point));
+            // if (lines[line_count].points == NULL) {
+            //     fprintf(stderr, "Failed to allocate memory for points\n");
+            //     return;
+            // }
+            // lines[line_count].color[0] = colors[current_color_index][0];
+            // lines[line_count].color[1] = colors[current_color_index][1];
+            // lines[line_count].color[2] = colors[current_color_index][2];
             #endif
         } else if (action == GLFW_RELEASE) {
             #ifdef __linux__
             allow_draw = 0; // Stop drawing when spacebar is released
+            line_count++;
             #endif
         }
     }
