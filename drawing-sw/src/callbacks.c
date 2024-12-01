@@ -39,7 +39,7 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
     memcpy(payload, message->payload, message->payloadlen);
     payload[message->payloadlen] = '\0';
     sscanf(payload, "%f %f", &mqtt_x, &mqtt_y);
-    print("%f %f", &mqtt_x, &mqtt_y)
+    print("%f %f", &mqtt_x, &mqtt_y);
     free(payload);
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
