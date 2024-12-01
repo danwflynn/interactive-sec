@@ -7,6 +7,10 @@
 #include "drawing_io.h"
 #include "callbacks.h"
 
+#ifdef __Linux__
+#include <pthread.h>
+#endif
+
 // Initialize the global variables
 Line lines[MAX_LINES];
 int line_count = 0;
@@ -79,7 +83,9 @@ int main(void) {
 
     // Initialize MQTT (Linux)
     #ifdef __linux__
-    setup_mqtt();  // Initialize MQTT setup
+    pthread_t mqtt_thread_id;
+    pthread_create(&mqtt_thread_id, NULL, mqtt_thread, NULL);
+    setup_mqtt();  // Setup MQTT
     #endif
 
     // Main loop

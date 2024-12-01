@@ -15,21 +15,6 @@ volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
 int use_mqtt = 0;
 
 int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
-    // printf("Message arrived callback triggered\n");
-    // char *payload = (char *)malloc(message->payloadlen + 1);
-    // if (!payload) {
-    //     printf("Failed to allocate memory for payload\n");
-    //     MQTTClient_freeMessage(&message);
-    //     MQTTClient_free(topicName);
-    //     return 1;
-    // }
-    // memcpy(payload, message->payload, message->payloadlen);
-    // payload[message->payloadlen] = '\0';
-    // sscanf(payload, "%f %f", &mqtt_x, &mqtt_y);
-    // printf("%f %f", &mqtt_x, &mqtt_y);
-    // free(payload);
-    // MQTTClient_freeMessage(&message);
-    // MQTTClient_free(topicName);
     if (message->payloadlen) {
         char *payload = (char *)malloc(message->payloadlen + 1);
         if (!payload) {
@@ -56,7 +41,6 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
 }
 
 void setup_mqtt() {
-    MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
 
     int rc = MQTTClient_create(&client, BROKER, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
@@ -85,15 +69,14 @@ void setup_mqtt() {
     }
 
     printf("Subscribed to topic: %s\n", TOPIC);
-
-    while (1) {
-        usleep(100000);
-    }
 }
 
-int poll_mqtt_coordinates() {
-    MQTTClient_setCallbacks(client, NULL, NULL, mqtt_message_arrived, NULL);
-    MQTTClient_yield();
+// MQTT polling in a separate thread
+void* mqtt_thread(void* arg) {
+    while (1) {
+        MQTTClient_yield();
+        usleep(100000);  // Sleep to prevent high CPU usage
+    }
 }
 
 #endif // __linux__
