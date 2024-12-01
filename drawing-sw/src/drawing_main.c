@@ -42,17 +42,17 @@ void draw_lines() {
         glEnd();
     }
     
-    #ifdef __Linux__
-    if (allow_draw && lines[line_count].point_count > 1) {
-        // Set the color of the current line
-        glColor3f(lines[line_count].color[0], lines[line_count].color[1], lines[line_count].color[2]);
-        glBegin(GL_LINE_STRIP);
-        for (int j = 0; j < lines[line_count].point_count; ++j) {
-            glVertex2f(lines[line_count].points[j].x, lines[line_count].points[j].y);
-        }
-        glEnd();
-    }
-    #endif
+    // #ifdef __Linux__
+    // if (allow_draw && lines[line_count].point_count > 1) {
+    //     // Set the color of the current line
+    //     glColor3f(lines[line_count].color[0], lines[line_count].color[1], lines[line_count].color[2]);
+    //     glBegin(GL_LINE_STRIP);
+    //     for (int j = 0; j < lines[line_count].point_count; ++j) {
+    //         glVertex2f(lines[line_count].points[j].x, lines[line_count].points[j].y);
+    //     }
+    //     glEnd();
+    // }
+    // #endif
 }
 
 void free_line_memory(Line* line) {
