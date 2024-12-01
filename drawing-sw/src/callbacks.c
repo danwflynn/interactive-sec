@@ -11,8 +11,9 @@
 #include "MQTTClient.h"
 
 MQTTClient client;
-volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
+//volatile float mqtt_x = 0.0f, mqtt_y = 0.0f;
 int use_mqtt = 0;
+int allow_draw = 0;
 
 int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
     if (message->payloadlen) {
@@ -27,7 +28,9 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
         memcpy(payload, message->payload, message->payloadlen);
         payload[message->payloadlen] = '\0';
 
-        printf("Received message on topic %s: %s\n", topicName, payload);
+        if (allow_draw == 1) {
+            printf("Received message on topic %s: %s\n", topicName, payload);
+        }
 
         free(payload);
     } else {
@@ -150,18 +153,23 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         // Draw at MQTT coordinates while spacebar is held down
         #ifdef __linux__
-        if (use_mqtt) {
-            int width, height;
-            glfwGetWindowSize(window, &width, &height);
-            float x = (2.0f * mqtt_x / width) - 1.0f;
-            float y = 1.0f - (2.0f * mqtt_y / height);
+        allow_draw = 1;
+        // if (use_mqtt) {
+        //     int width, height;
+        //     glfwGetWindowSize(window, &width, &height);
+        //     float x = (2.0f * mqtt_x / width) - 1.0f;
+        //     float y = 1.0f - (2.0f * mqtt_y / height);
 
-            if (line_count < MAX_LINES) {
-                lines[line_count].points[lines[line_count].point_count].x = x;
-                lines[line_count].points[lines[line_count].point_count].y = y;
-                lines[line_count].point_count++;
-            }
-        }
+        //     if (line_count < MAX_LINES) {
+        //         lines[line_count].points[lines[line_count].point_count].x = x;
+        //         lines[line_count].points[lines[line_count].point_count].y = y;
+        //         lines[line_count].point_count++;
+        //     }
+        // }
+        #endif
+    } else {
+        #ifdef __linux__
+        allow_draw = 0;
         #endif
     }
 }

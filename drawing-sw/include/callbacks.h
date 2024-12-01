@@ -21,8 +21,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 #define TIMEOUT 10000L                 // Timeout for waiting for messages
 
 extern MQTTClient client;
-extern volatile float mqtt_x, mqtt_y;
+//extern volatile float mqtt_x, mqtt_y;
 extern int use_mqtt;
+extern int allow_draw:
 
 void setup_mqtt();  // Setup MQTT client
 void* mqtt_thread(void* arg);  // Poll MQTT for red dot coordinates
