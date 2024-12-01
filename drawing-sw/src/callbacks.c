@@ -37,8 +37,8 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
                 // Convert mouse coordinates to OpenGL coordinates
                 int width = 1280;
                 int height = 960;
-                float x = (2.0f * xpos / width) - 1.0f;
-                float y = 1.0f - (2.0f * ypos / height);
+                float x = ((2.0f * xpos / width) - 1.0f) * 2.0f;
+                float y = (1.0f - (2.0f * ypos / height)) * 2.0f;
 
                 lines[line_count].points[lines[line_count].point_count].x = x;
                 lines[line_count].points[lines[line_count].point_count].y = y;
