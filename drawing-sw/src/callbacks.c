@@ -39,6 +39,7 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
     memcpy(payload, message->payload, message->payloadlen);
     payload[message->payloadlen] = '\0';
     sscanf(payload, "%f %f", &mqtt_x, &mqtt_y);
+    print("%f %f", &mqtt_x, &mqtt_y)
     free(payload);
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
@@ -121,17 +122,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         // Draw at MQTT coordinates while spacebar is held down
         #ifdef __linux__
         if (use_mqtt) {
-            // int width, height;
-            // glfwGetWindowSize(window, &width, &height);
-            // float x = (2.0f * mqtt_x / width) - 1.0f;
-            // float y = 1.0f - (2.0f * mqtt_y / height);
+            int width, height;
+            glfwGetWindowSize(window, &width, &height);
+            float x = (2.0f * mqtt_x / width) - 1.0f;
+            float y = 1.0f - (2.0f * mqtt_y / height);
 
-            // if (line_count < MAX_LINES) {
-            //     lines[line_count].points[lines[line_count].point_count].x = x;
-            //     lines[line_count].points[lines[line_count].point_count].y = y;
-            //     lines[line_count].point_count++;
-            // }
-            printf("%f, %f", mqtt_x, mqtt_y);
+            if (line_count < MAX_LINES) {
+                lines[line_count].points[lines[line_count].point_count].x = x;
+                lines[line_count].points[lines[line_count].point_count].y = y;
+                lines[line_count].point_count++;
+            }
         }
         #endif
     }
