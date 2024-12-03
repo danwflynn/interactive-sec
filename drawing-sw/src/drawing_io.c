@@ -4,6 +4,8 @@
 #include <string.h>
 #include "drawing_io.h"
 #include "drawing_main.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 void save_lines(const char* filename) {
     FILE* file = fopen(filename, "wb");
@@ -79,4 +81,55 @@ void load_lines(const char* filename) {
     }
 
     fclose(file);
+}
+
+
+void save_to_png(const char* filename) {
+    unsigned char* image = (unsigned char*)calloc(WINDOW_WIDTH * WINDOW_HEIGHT * 3, sizeof(unsigned char));
+    if (!image) {
+        fprintf(stderr, "Failed to allocate memory for the image\n");
+        return;
+    }
+
+    // Draw lines into the image buffer
+    for (int i = 0; i < line_count; ++i) {
+        Line* line = &lines[i];
+        for (int j = 0; j < line->point_count - 1; ++j) {
+            // Map normalized coordinates ([-1,1]) to image space ([0, IMAGE_WIDTH/HEIGHT])
+            int x1 = (line->points[j].x + 1.0f) * 0.5f * WINDOW_WIDTH;
+            int y1 = (line->points[j].y + 1.0f) * 0.5f * WINDOW_HEIGHT;
+            int x2 = (line->points[j + 1].x + 1.0f) * 0.5f * WINDOW_WIDTH;
+            int y2 = (line->points[j + 1].y + 1.0f) * 0.5f * WINDOW_HEIGHT;
+
+            // Convert color values (0.0-1.0) to 0-255
+            int r = (int)(line->color[0] * 255);
+            int g = (int)(line->color[1] * 255);
+            int b = (int)(line->color[2] * 255);
+
+            // Draw the line using Bresenham's algorithm
+            int dx = abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+            int dy = abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+            int err = (dx > dy ? dx : -dy) / 2, e2;
+
+            while (1) {
+                if (x1 >= 0 && x1 < WINDOW_WIDTH && y1 >= 0 && y1 < WINDOW_HEIGHT) {
+                    int idx = (y1 * WINDOW_WIDTH + x1) * 3;
+                    image[idx] = r;
+                    image[idx + 1] = g;
+                    image[idx + 2] = b;
+                }
+                if (x1 == x2 && y1 == y2) break;
+                e2 = err;
+                if (e2 > -dx) { err -= dy; x1 += sx; }
+                if (e2 < dy) { err += dx; y1 += sy; }
+            }
+        }
+    }
+
+    // Write the image to a PNG file
+    if (!stbi_write_png(filename, WINDOW_WIDTH, WINDOW_HEIGHT, 3, image, WINDOW_WIDTH * 3)) {
+        fprintf(stderr, "Failed to write PNG file\n");
+    }
+
+    free(image);
 }

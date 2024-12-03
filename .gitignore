@@ -6,3 +6,4 @@ drawing-sw/paho.mqtt.c/
 .vscode/
 drawing-sw/test/rdr
 drawing-sw/__pycache__
+drawing-sw/drawing.png

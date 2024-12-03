@@ -8,6 +8,9 @@
 #define MAX_LINES 10000
 #define INITIAL_POINT_CAPACITY 1000
 
+#define WINDOW_WIDTH 1280
+#define WINDOW_HEIGHT 960
+
 typedef struct {
     float x, y;
 } Point;

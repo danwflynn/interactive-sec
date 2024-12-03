@@ -3,5 +3,6 @@
 
 void save_lines(const char* filename);
 void load_lines(const char* filename);
+void save_to_png(const char* filename);
 
 #endif // DRAWING_IO_H

@@ -37,8 +37,8 @@ int mqtt_message_arrived(void* context, char* topicName, int topicLen, MQTTClien
         if (num_parsed == 2) {
             if (allow_draw && lines[line_count].point_count < lines[line_count].point_capacity) {
                 // Convert mouse coordinates to OpenGL coordinates
-                int width = 1280;
-                int height = 960;
+                int width = WINDOW_WIDTH;
+                int height = WINDOW_HEIGHT;
                 float x = (2.0f * xpos / width) - 1.0f;
                 float y = 1.0f - (2.0f * ypos / height);
 
@@ -176,7 +176,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         // Load lines from a file
         load_lines("drawing_data.bin");
         printf("Drawing loaded from drawing_data.bin\n");
-    } 
+    } else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+        save_to_png("drawing.png");
+        printf("Drawing saved to drawing.png");
+    }
     // Handle spacebar key press and release
     if (key == GLFW_KEY_SPACE) {
         if (action == GLFW_PRESS) {
