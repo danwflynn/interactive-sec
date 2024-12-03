@@ -1,9 +1,10 @@
 ########### Imports ###########
-
+import tkinter as tk
 from tkinter import Tk, Frame, Canvas, CENTER, Button, NW, Label, SOLID
 from tkinter import colorchooser, filedialog, OptionMenu, messagebox
 from tkinter import DOTBOX, StringVar, simpledialog
 from tkinter import *
+from PIL import Image, ImageTk
 
 import os
 import pickle
@@ -30,15 +31,6 @@ penColor = "black"
 stroke = 1
 
 canvas_data = []
-
-shapeSelect = StringVar()
-shapeList = ["None", "Square", "Circle/Oval", "Rectangle", "Line"]
-shapeSelect.set("None")
-selected_shape = None
-shapes = []
-shapeFill = "black"
-width = 0
-height = 0
 
 
 # Increase Stroke Size By 1
@@ -98,68 +90,6 @@ def colorChoice():
         pass
 
 
-# Shape Color Chooser
-def shapeColorChoice():
-    global shapeFill
-
-    color = colorchooser.askcolor(title="Select a Color")
-    canvas["cursor"] = "pencil"
-
-    if color[1]:
-        shapeFill = color[1]
-
-    else:
-        shapeFill = "black"
-
-def on_shape_click(event):
-    #Capture the initial position of the mouse click
-    global currentPoint, shapeSelect, shapeFill, selected_shape, width, height
-
-    x = event.x
-    y = event.y
-
-    # Check if a shape is selected in the OptionMenu
-    if shapeSelect.get() != "None":
-        askShapeDimention()  # Ask for dimensions if needed
-
-        # Create the shape based on the selection
-        match shapeSelect.get():
-            case "Square":
-                canvas.create_rectangle(x, y, x + width, y + height, fill=shapeFill)
-            case "Circle/Oval":
-                canvas.create_oval(x, y, x + width, y + height, fill=shapeFill)
-            case "Rectangle":
-                canvas.create_rectangle(x, y, x + width, y + height, fill=shapeFill)
-            case "Line":
-                canvas.create_line(x, y, x + width, y + height, fill=shapeFill, width=stroke)
-            case _:
-                pass
-    else:
-        # If no shape is selected, allow the user to move shapes as usual
-        shape = canvas.find_closest(x, y)
-        selected_shape = shape[0]
-
-        currentPoint = [x, y]
-
-def on_shape_drag(event):
-    global currentPoint
-    global selected_shape
-
-    x = currentPoint[0]
-    y = currentPoint[1]
-
-    if selected_shape is not None:
-        # Calculate the difference in position
-        dx = event.x - x
-        dy = event.y - y
-
-        # Move the shape by that distance
-        canvas.move(selected_shape, dx, dy)
-
-        # Update the last known position
-        x = event.x
-        y = event.y
-        currentPoint = [x,y]
 
 # Paint Function
 def paint(event):
@@ -227,60 +157,21 @@ def saveEcts():
             pickle.dump(canvas_data, file)
 
 
-# Opening already or earlier made ects files
-def openEcts():
-    global canvas_data
-    file_path = filedialog.askopenfilename(
-        defaultextension=".ects",
-        filetypes=[
-            ("ECTS files", "*.ects"),
-            ("PNG files", "*.png"),
-            ("JPG files", "*.jpg"),
-        ],
-    )
-    if file_path:
-        with open(file_path, "rb") as file:
-            canvas_data = pickle.load(file)
 
-        redrawCanvas()
+def openPNG():
+
+    # Open the image using PIL
+    image_path = "drawing.png"  # Replace with your image file path
+    image = Image.open(image_path)
+
+    # Convert the image to a Tkinter-compatible format
+    image = image.resize((1280, 960), Image.LANCZOS)
+    photo = ImageTk.PhotoImage(image)
 
 
-# Redrawing the Canvas Data after opening it
-def redrawCanvas():
-    global canvas_data
-    # Clear the canvas
-    canvas.delete("all")
-    # Draw objects from canvas_data
-    for obj in canvas_data:
-        if obj["type"] == "polygon":
-            color = obj["color"]
-            coords = obj["coords"]
-            canvas.create_polygon(coords, fill=color, outline=color, width=stroke)
-
-
-# Asking Shape Dimentions
-def askShapeDimention():
-    global width, height
-
-    width = simpledialog.askinteger(
-        "ECTS - Paint App", f"Enter Width for {shapeSelect.get()}"
-    )
-
-    height = simpledialog.askinteger(
-        "ECTS - Paint App", f"Enter Height for {shapeSelect.get()}"
-    )
-    if width and height:
-        print(width, height)
-
-
-# Key Binding to Show Shape OptionMenu
-def show_shape_menu(event):
-    # Get the current position of the shape OptionMenu
-    x = shapeMenu.winfo_rootx()
-    y = shapeMenu.winfo_rooty() + shapeMenu.winfo_height()
-
-    # Post the menu at the current position
-    shapeMenu['menu'].post(x, y)
+    # Display the image on the canvas
+    canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+    
 
 def speak():
     # Run the drawing app with the retrieved image pixel data
@@ -297,7 +188,7 @@ frame1 = Frame(root, height=150, width=650)
 frame1.grid(row=0, column=0)
 
 # Holder Frame
-holder = Frame(frame1, height=120, width=550, bg="white", pady=10)
+holder = Frame(frame1, height=120, width=550, pady=10)
 holder.grid(row=0, column=0, sticky=W)
 holder.place(x=0, y=0)
 
@@ -340,7 +231,7 @@ saveButton = Button(holder, text="SAVE", height=1, width=12, command=saveImg)
 saveButton.grid(row=1, column=1)
 
 # Tool 5 - Open File
-openButton = Button(holder, text="OPEN", height=1, width=12, command=openEcts)
+openButton = Button(holder, text="OPEN", height=1, width=12, command=openPNG)
 openButton.grid(row=2, column=1)
 
 # Tool 6 - New Paint
@@ -381,34 +272,11 @@ sizedButton.grid(row=2, column=3)
 defaultButton = Button(holder, text="Default", height=1, width=12, command=strokeDf)
 defaultButton.grid(row=3, column=3)
 
-#### Shapes ####
-
-# Label for Tool 11,12,13
-label1123 = Label(holder, text="SHAPES", borderwidth=1, relief=SOLID, width=15)
-label1123.grid(row=0, column=4)
-
-# Tool 11 - shapeSelector
-shapeMenu = OptionMenu(holder, shapeSelect, *shapeList)
-shapeMenu.grid(row=1, column=4)
-shapeMenu.config(width=8)
-
-# Tool 9 - Decreament by 1
-dimentionButton = Button(
-    holder, text="Dimention", height=1, width=12, command=askShapeDimention
-)
-dimentionButton.grid(row=2, column=4)
-
 # Tool 9 - Speech-Draw
 dimentionButton = Button(
     holder, text="speech-Draw", height=1, width=12, command=speak
 )
 dimentionButton.grid(row=3, column=4)
-
-# Tool 10 - Default
-fillButton = Button(holder, text="Fill", height=1, width=12, command=shapeColorChoice)
-fillButton.grid(row=4, column=4)
-
-
 
 #### Canvas Frame ####
 
@@ -426,8 +294,6 @@ canvas.config(cursor="pencil")
 canvas.bind("<B1-Motion>", paint)
 canvas.bind("<ButtonRelease-1>", paint)
 canvas.bind("<Button-1>", paint)
-canvas.bind("<Button-3>", on_shape_click)
-canvas.bind("<B3-Motion>", on_shape_drag)
 
 
 # Key Bindings
@@ -437,14 +303,10 @@ root.bind("<p>", lambda event: pencil())
 root.bind("<e>", lambda event: eraser())
 root.bind("<c>", lambda event: colorChoice())
 root.bind("<Control-s>", lambda event: saveImg())
-root.bind("<Control-o>", lambda event: openEcts())
+#root.bind("<Control-o>", lambda event: openEcts())
 root.bind("<Control-n>", lambda event: newApp())
 root.bind("<Delete>", lambda event: clearScreen())
 root.bind("<Control-d>", lambda event: clearScreen())
-root.bind("<d>", lambda event: askShapeDimention())
-root.bind("<f>", lambda event: shapeColorChoice())
-root.bind("<t>", lambda event: speak())
-root.bind("<s>", show_shape_menu)
 ########### Main Loop ###########
 canvas.pack()
 root.mainloop()
