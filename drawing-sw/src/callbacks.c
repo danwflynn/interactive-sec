@@ -179,7 +179,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     } else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
         save_to_png("drawing.png");
         printf("Drawing saved to drawing.png\n");
+    } else if (key == GLFW_KEY_U && action == GLFW_PRESS) {
+        // Undo the last line
+        if (line_count > 0) {
+            line_count--;
+            free_line_memory(&lines[line_count]);
+            printf("Last line undone. Remaining lines: %d\n", line_count);
+        } else {
+            printf("No lines to undo.\n");
+        }
     }
+
     // Handle spacebar key press and release
     if (key == GLFW_KEY_SPACE) {
         if (action == GLFW_PRESS) {
