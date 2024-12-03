@@ -101,6 +101,9 @@ void save_to_png(const char* filename) {
             int x2 = (line->points[j + 1].x + 1.0f) * 0.5f * WINDOW_WIDTH;
             int y2 = (line->points[j + 1].y + 1.0f) * 0.5f * WINDOW_HEIGHT;
 
+            y1 = WINDOW_HEIGHT - y1 - 1;
+            y2 = WINDOW_HEIGHT - y2 - 1;
+
             // Convert color values (0.0-1.0) to 0-255
             int r = (int)(line->color[0] * 255);
             int g = (int)(line->color[1] * 255);
