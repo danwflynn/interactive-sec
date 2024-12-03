@@ -178,7 +178,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         printf("Drawing loaded from drawing_data.bin\n");
     } else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
         save_to_png("drawing.png");
-        printf("Drawing saved to drawing.png");
+        printf("Drawing saved to drawing.png\n");
     }
     // Handle spacebar key press and release
     if (key == GLFW_KEY_SPACE) {
