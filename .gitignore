@@ -5,3 +5,4 @@ drawing-sw/glfw/
 drawing-sw/paho.mqtt.c/
 .vscode/
 drawing-sw/test/rdr
+drawing-sw/__pycache__

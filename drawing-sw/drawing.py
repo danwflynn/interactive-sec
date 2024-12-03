@@ -7,6 +7,7 @@ from tkinter import *
 
 import os
 import pickle
+import mic, model
 ##Need to increase/decrease erase size
 #Need to
 
@@ -119,7 +120,7 @@ def on_shape_click(event):
 
     # Check if a shape is selected in the OptionMenu
     if shapeSelect.get() != "None":
-        askShapeDimention() # Ask for dimensions if needed
+        askShapeDimention()  # Ask for dimensions if needed
 
         # Create the shape based on the selection
         match shapeSelect.get():
@@ -281,6 +282,11 @@ def show_shape_menu(event):
     # Post the menu at the current position
     shapeMenu['menu'].post(x, y)
 
+def speak():
+    # Run the drawing app with the retrieved image pixel data
+    print("say your object please")
+    user_speech = mic.talk()
+    model.open_gallery_window(canvas, user_speech)
 
 ########### Paint App ###########
 
@@ -392,9 +398,15 @@ dimentionButton = Button(
 )
 dimentionButton.grid(row=2, column=4)
 
+# Tool 9 - Speech-Draw
+dimentionButton = Button(
+    holder, text="speech-Draw", height=1, width=12, command=speak
+)
+dimentionButton.grid(row=3, column=4)
+
 # Tool 10 - Default
 fillButton = Button(holder, text="Fill", height=1, width=12, command=shapeColorChoice)
-fillButton.grid(row=3, column=4)
+fillButton.grid(row=4, column=4)
 
 
 
@@ -431,7 +443,10 @@ root.bind("<Delete>", lambda event: clearScreen())
 root.bind("<Control-d>", lambda event: clearScreen())
 root.bind("<d>", lambda event: askShapeDimention())
 root.bind("<f>", lambda event: shapeColorChoice())
+root.bind("<t>", lambda event: speak())
 root.bind("<s>", show_shape_menu)
 ########### Main Loop ###########
 canvas.pack()
 root.mainloop()
+
+
