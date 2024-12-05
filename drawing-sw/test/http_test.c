@@ -6,10 +6,10 @@
 #define PORT 8080
 
 // Callback to handle HTTP requests
-static int handle_request(void *cls, struct MHD_Connection *connection, 
-                          const char *url, const char *method, 
-                          const char *version, const char *upload_data, 
-                          size_t *upload_data_size, void **con_cls) {
+static enum MHD_Result handle_request(void *cls, struct MHD_Connection *connection, 
+                                      const char *url, const char *method, 
+                                      const char *version, const char *upload_data, 
+                                      size_t *upload_data_size, void **con_cls) {
     static int dummy;
     const char *response_str = "Message received!";
     struct MHD_Response *response;
@@ -37,7 +37,7 @@ static int handle_request(void *cls, struct MHD_Connection *connection,
     int ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
     MHD_destroy_response(response);
 
-    return ret;
+    return (ret == MHD_YES) ? MHD_YES : MHD_NO; // Ensure a valid MHD_Result is returned
 }
 
 int main() {

@@ -7,3 +7,4 @@ drawing-sw/paho.mqtt.c/
 drawing-sw/test/rdr
 drawing-sw/__pycache__
 drawing-sw/drawing.png
+drawing-sw/test/http_test
