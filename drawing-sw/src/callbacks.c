@@ -7,6 +7,17 @@
 #include "drawing_io.h"
 #include "callbacks.h"
 
+
+float colors[][3] = {
+    {1.0f, 0.0f, 0.0f},  // Red
+    {0.0f, 1.0f, 0.0f},  // Green
+    {0.0f, 0.0f, 1.0f},  // Blue
+    {1.0f, 1.0f, 0.0f},  // Yellow
+    {1.0f, 0.0f, 1.0f},  // Pink
+    {0.5f, 0.0f, 0.5f},  // Purple
+    {0.0f, 0.0f, 0.0f}   // Black
+};
+
 #ifdef __linux__  // Include MQTT libraries and variables for Raspberry Pi
 #include "MQTTClient.h"
 #include <microhttpd.h>
@@ -139,7 +150,7 @@ static enum MHD_Result handle_request(void *cls, struct MHD_Connection *connecti
             lines[line_count].points = (Point*)malloc(lines[line_count].point_capacity * sizeof(Point));
             if (lines[line_count].points == NULL) {
                 fprintf(stderr, "Failed to allocate memory for points\n");
-                return;
+
             }
             lines[line_count].color[0] = colors[current_color_index][0];
             lines[line_count].color[1] = colors[current_color_index][1];
@@ -197,16 +208,6 @@ void* http_thread(void* arg) {
 }
 
 #endif // __linux__
-
-float colors[][3] = {
-    {1.0f, 0.0f, 0.0f},  // Red
-    {0.0f, 1.0f, 0.0f},  // Green
-    {0.0f, 0.0f, 1.0f},  // Blue
-    {1.0f, 1.0f, 0.0f},  // Yellow
-    {1.0f, 0.0f, 1.0f},  // Pink
-    {0.5f, 0.0f, 0.5f},  // Purple
-    {0.0f, 0.0f, 0.0f}   // Black
-};
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
