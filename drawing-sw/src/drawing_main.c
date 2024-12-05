@@ -41,18 +41,6 @@ void draw_lines() {
         }
         glEnd();
     }
-    
-    // #ifdef __Linux__
-    // if (allow_draw && lines[line_count].point_count > 1) {
-    //     // Set the color of the current line
-    //     glColor3f(lines[line_count].color[0], lines[line_count].color[1], lines[line_count].color[2]);
-    //     glBegin(GL_LINE_STRIP);
-    //     for (int j = 0; j < lines[line_count].point_count; ++j) {
-    //         glVertex2f(lines[line_count].points[j].x, lines[line_count].points[j].y);
-    //     }
-    //     glEnd();
-    // }
-    // #endif
 }
 
 void free_line_memory(Line* line) {
@@ -98,6 +86,8 @@ int main(void) {
     pthread_t mqtt_thread_id;
     pthread_create(&mqtt_thread_id, NULL, mqtt_thread, NULL);
     setup_mqtt();  // Setup MQTT
+    pthread_t http_thread_id;
+    pthread_create(&http_thread_id, NULL, http_thread, NULL);
     #endif
 
     // Main loop

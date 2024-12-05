@@ -22,7 +22,7 @@ cflags = f"-I {include_path} -I {glfw_include_path} -I {mqtt_include_path}"
 if platform.system() == "Windows":
     lflags = f"-L {glfw_lib_path} -lglfw3 -lgdi32 -lopengl32 -lm -lpthread"
 else:
-    lflags = f"-L {glfw_lib_path} -L {mqtt_lib_path} -Wl,-rpath,{mqtt_lib_path} -lglfw3 -lpaho-mqtt3c -lGL -lX11 -lm -lpthread"
+    lflags = f"-L {glfw_lib_path} -L {mqtt_lib_path} -Wl,-rpath,{mqtt_lib_path} -lglfw3 -lpaho-mqtt3c -lGL -lX11 -lm -lpthread -lmicrohttpd"
 
 # Build command
 command = f"{compiler} -o {project_name} {' '.join(source_files)} {cflags} {lflags}"

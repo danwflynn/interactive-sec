@@ -13,6 +13,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 #ifdef __linux__  // Define MQTT setup and polling only for Raspberry Pi/Linux
 #include "MQTTClient.h"
+#include <microhttpd.h>
 
 #define BROKER "tcp://localhost:1883"  // MQTT broker address
 #define CLIENTID "CoordinateReceiver"  // Client ID
@@ -20,12 +21,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 #define QOS 1                          // Quality of Service level
 #define TIMEOUT 10000L                 // Timeout for waiting for messages
 
+#define PORT 8080
+
 extern MQTTClient client;
 extern int use_mqtt;
 extern int allow_draw;
 
 void setup_mqtt();  // Setup MQTT client
 void* mqtt_thread(void* arg);  // Poll MQTT for red dot coordinates
+
+static enum MHD_Result handle_request(void *cls, struct MHD_Connection *connection, 
+                                      const char *url, const char *method, 
+                                      const char *version, const char *upload_data, 
+                                      size_t *upload_data_size, void **con_cls);
+void* http_thread(void* arg);
+
 #endif
 
 #endif // CALLBACKS_H

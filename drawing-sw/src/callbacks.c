@@ -9,6 +9,7 @@
 
 #ifdef __linux__  // Include MQTT libraries and variables for Raspberry Pi
 #include "MQTTClient.h"
+#include <microhttpd.h>
 
 MQTTClient client;
 int use_mqtt = 0;
@@ -108,6 +109,93 @@ void* mqtt_thread(void* arg) {
     }
 }
 
+static enum MHD_Result handle_request(void *cls, struct MHD_Connection *connection, 
+                                      const char *url, const char *method, 
+                                      const char *version, const char *upload_data, 
+                                      size_t *upload_data_size, void **con_cls) {
+    static int dummy;
+    const char *response_str = "Message received!";
+    struct MHD_Response *response;
+
+    // Only handle POST requests
+    if (strcmp(method, "POST") != 0) {
+        return MHD_NO; // Reject non-POST requests
+    }
+
+    if (*con_cls == NULL) {
+        *con_cls = &dummy;
+        return MHD_YES;
+    }
+
+    if (*upload_data_size > 0) {
+        printf("Received message: %s\n", upload_data);
+
+        //Button logic
+        if (strcmp(upload_data, "{\"button\": 1,\"state\": \"pressed\"}") == 0 && allow_draw == 0) {
+            //start drawing
+            allow_draw = 1; // Start drawing when button 1 is pressed
+            lines[line_count].point_count = 0;
+            lines[line_count].point_capacity = INITIAL_POINT_CAPACITY;
+            lines[line_count].points = (Point*)malloc(lines[line_count].point_capacity * sizeof(Point));
+            if (lines[line_count].points == NULL) {
+                fprintf(stderr, "Failed to allocate memory for points\n");
+                return;
+            }
+            lines[line_count].color[0] = colors[current_color_index][0];
+            lines[line_count].color[1] = colors[current_color_index][1];
+            lines[line_count].color[2] = colors[current_color_index][2];
+        } else if (strcmp(upload_data, "{\"button\": 1,\"state\": \"released\"}") == 0 && allow_draw == 1) {
+            //finish drawing
+            allow_draw = 0; // Stop drawing when button 1 is released
+            line_count++;
+        } else if (strcmp(upload_data, "{\"button\": 2,\"state\": \"pressed\"}") == 0) {
+            //change colors
+            current_color_index = (current_color_index + 1) % (sizeof(colors) / sizeof(colors[0]));
+            printf("Switched to color: R=%.1f, G=%.1f, B=%.1f\n", colors[current_color_index][0], colors[current_color_index][1], colors[current_color_index][2]);
+        } else if (strcmp(upload_data, "{\"button\": 3,\"state\": \"pressed\"}") == 0) {
+            //undo
+            if (line_count > 0) {
+            line_count--;
+            free_line_memory(&lines[line_count]);
+            printf("Last line undone. Remaining lines: %d\n", line_count);
+            } else {
+                printf("No lines to undo.\n");
+            }
+        }
+
+        *upload_data_size = 0; // Signal that we've processed this data
+        return MHD_YES;
+    }
+
+    // Send response
+    response = MHD_create_response_from_buffer(strlen(response_str), 
+                                               (void *)response_str, 
+                                               MHD_RESPMEM_PERSISTENT);
+    int ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
+    MHD_destroy_response(response);
+
+    return (ret == MHD_YES) ? MHD_YES : MHD_NO; // Ensure a valid MHD_Result is returned
+}
+
+void* http_thread(void* arg) {
+    struct MHD_Daemon *daemon;
+
+    // Start the HTTP server
+    daemon = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY, PORT, NULL, NULL, 
+                              &handle_request, NULL, MHD_OPTION_END);
+    if (daemon == NULL) {
+        fprintf(stderr, "Failed to start HTTP server\n");
+    }
+
+    printf("HTTP server running on port %d\n", PORT);
+
+    // Run server indefinitely
+    getchar();
+
+    // Stop the server
+    MHD_stop_daemon(daemon);
+}
+
 #endif // __linux__
 
 float colors[][3] = {
@@ -192,8 +280,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     // Handle spacebar key press and release
     if (key == GLFW_KEY_SPACE) {
-        if (action == GLFW_PRESS) {
-            #ifdef __linux__
+        #ifdef __linux__
+        if (action == GLFW_PRESS && allow_draw == 0) {
             allow_draw = 1; // Start drawing when spacebar is pressed
             lines[line_count].point_count = 0;
             lines[line_count].point_capacity = INITIAL_POINT_CAPACITY;
@@ -205,12 +293,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             lines[line_count].color[0] = colors[current_color_index][0];
             lines[line_count].color[1] = colors[current_color_index][1];
             lines[line_count].color[2] = colors[current_color_index][2];
-            #endif
-        } else if (action == GLFW_RELEASE) {
-            #ifdef __linux__
+        } else if (action == GLFW_RELEASE && allow_draw == 1) {
             allow_draw = 0; // Stop drawing when spacebar is released
             line_count++;
-            #endif
         }
+        #endif
     }
 }
